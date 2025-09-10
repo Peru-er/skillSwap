@@ -9,6 +9,7 @@ from src.database.db import get_db
 from src.schemas import ExchangeCreate, ExchangeUpdate, ExchangeResponse, ExchangeStatus
 from src.repository import exchanges as repository_exchanges
 from src import repository
+from src.deps import get_current_user
 
 
 router = APIRouter(prefix='/exchanges', tags=["exchanges"])
@@ -117,3 +118,7 @@ def get_exchanges(
         user_id=user_id,
         sort_order=sort_order
     )
+
+@router.get('/my-exchanges')
+def my_exchanges(current_user=Depends(get_current_user)):
+    return {"user_id": current_user.id, "username": current_user.username}

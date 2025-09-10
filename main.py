@@ -2,10 +2,12 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import uvicorn
+from fastapi.staticfiles import StaticFiles
 
 from src.database.db import engine, get_db
 from src.database.models import Base
 from src.routes import users, skills, exchanges, reviews, categories, stats
+from src.routes.photos import router as photos_router
 
 
 # Створюємо таблиці (якщо вони не існують)
@@ -36,6 +38,8 @@ app.include_router(exchanges.router, prefix="/api")
 app.include_router(reviews.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
 app.include_router(categories.router, prefix="/api")
+app.include_router(photos_router, prefix="/api")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():

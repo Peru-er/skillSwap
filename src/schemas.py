@@ -117,7 +117,7 @@ class ExchangeCreate(ExchangeBase):
 
 
 class ExchangeUpdate(BaseModel):
-    status: Optional[ExchangeStatus] = None  
+    status: Optional[ExchangeStatus] = None
     message: Optional[str] = None
 
 
@@ -177,3 +177,9 @@ class Category(CategoryBase):
     class Config:
         orm_mode = True
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+class TokenData(BaseModel):
+    user_id: Optional[int] = None

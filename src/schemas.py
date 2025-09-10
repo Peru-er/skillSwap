@@ -117,7 +117,7 @@ class ExchangeCreate(ExchangeBase):
 
 
 class ExchangeUpdate(BaseModel):
-    status: Optional[ExchangeStatus] = None  # зробив необов’язковим, якщо треба — можна зробити обов’язковим
+    status: Optional[ExchangeStatus] = None  
     message: Optional[str] = None
 
 
@@ -164,4 +164,16 @@ UserResponse.model_rebuild()
 SkillResponse.model_rebuild()
 ExchangeResponse.model_rebuild()
 ReviewResponse.model_rebuild()
+
+class CategoryBase(BaseModel):
+    name: str
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class Category(CategoryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
 

@@ -99,12 +99,34 @@ async def update_exchange(
 
 
 async def get_user_sent_exchanges(db: Session, user_id: int) -> List[Exchange]:
-    """Отримати надіслані користувачем запити."""
     return db.query(Exchange).filter(Exchange.sender_id == user_id).all()
 
 
 async def get_user_received_exchanges(db: Session, user_id: int) -> List[Exchange]:
-    """Отримати отримані користувачем запити."""
     return db.query(Exchange).filter(Exchange.receiver_id == user_id).all()
 
+def get_filtered_exchanges(
+    db: Session,
+    from_date=None,
+    to_date=None,
+    status=None,
+    user_id=None,
+    sort_order='desc'
+):
+    query = db.query(Exchange)
 
+    if from_date:
+        query = query.filter(Exchange.created_at >= from_date)
+    if to_date:
+        query = query.filter(Exchange.created_at <= to_date)
+    if status:
+        query = query.filter(Exchange.status == status)
+    if user_id:
+        query = query.filter(Exchange.user_id == user_id)
+
+    if sort_order == 'asc':
+        query = query.order_by(Exchange.created_at.asc())
+    else:
+        query = query.order_by(Exchange.created_at.desc())
+
+    return query.all()

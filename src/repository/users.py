@@ -4,7 +4,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 
-from src.database.models import User, Skill, Exchange, user_skills
+from src.database.models import User, Skill, Exchange
 from src.schemas import UserCreate, UserUpdate
 
 
@@ -58,36 +58,4 @@ async def get_user_skills(db: Session, user_id: int) -> Optional[List]:
     user = db.query(User).filter(User.id == user_id).first()
     return user.skills if user else None
 
-async def get_top_skills(db: Session):
-    results = (
-        db.query(Skill.title, func.count(user_skills.c.user_id).label("count"))
-        .join(user_skills, Skill.id == user_skills.c.skill_id)
-        .group_by(Skill.id)
-        .order_by(func.count(user_skills.c.user_id).desc())
-        .limit(10)
-        .all()
-    )
-    return [{"skill": r[0], "users_count": r[1]} for r in results]
-
-# Найактивніші користувачі
-async def get_active_users(db: Session):
-    results = (
-        db.query(
-            User.username,
-            func.count(Exchange.id).label("exchanges_count")
-        )
-        .join(Exchange, (Exchange.sender_id == User.id) | (Exchange.receiver_id == User.id))
-        .group_by(User.id)
-        .order_by(func.count(Exchange.id).desc())
-        .limit(10)
-        .all()
-    )
-    return [{"username": r[0], "exchanges_count": r[1]} for r in results]
-
-# Відсоток успішних обмінів
-async def get_exchange_success_rate(db: Session):
-    total = db.query(func.count(Exchange.id)).scalar()
-    completed = db.query(func.count(Exchange.id)).filter(Exchange.status == "completed").scalar()
-    success_rate = (completed / total * 100) if total else 0
-    return {"success_rate": round(success_rate, 2)}
 

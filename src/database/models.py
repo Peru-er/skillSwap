@@ -65,6 +65,7 @@ class Skill(Base):
     title = Column(String(100), nullable=False, index=True)
     description = Column(Text, nullable=False)
     category = Column(String(50), nullable=False, index=True)
+    category_id = Column(Integer, ForeignKey('categories.id'))
     level = Column(SQLEnum(SkillLevel), nullable=False)
     can_teach = Column(Boolean, default=False)
     want_learn = Column(Boolean, default=False)
@@ -111,3 +112,12 @@ class Review(Base):
     exchange = relationship("Exchange", back_populates="reviews")
     reviewer = relationship("User", foreign_keys=[reviewer_id], back_populates="given_reviews")
     reviewed = relationship("User", foreign_keys=[reviewed_id], back_populates="received_reviews")
+
+class Category(Base):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+
+    skills = relationship('Skill', back_populates='category')
+

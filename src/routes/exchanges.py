@@ -1,12 +1,14 @@
 
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Query
 from sqlalchemy.orm import Session
+from datetime import date
 
 
 from src.database.db import get_db
 from src.schemas import ExchangeCreate, ExchangeUpdate, ExchangeResponse, ExchangeStatus
 from src.repository import exchanges as repository_exchanges
+from src import repository
 
 
 router = APIRouter(prefix='/exchanges', tags=["exchanges"])
@@ -97,3 +99,21 @@ async def read_my_received_exchanges(
 ):
     """Отримати отримані запити на обмін."""
     return await repository_exchanges.get_user_received_exchanges(db, user_id)
+
+@router.get('/')
+def get_exchanges(
+    from_date: Optional[date] = Query(None),
+    to_date: Optional[date] = Query(None),
+    status: Optional[str] = Query(None),
+    user_id: Optional[int] = Query(None),
+    sort_order: str = Query('desc', regex='^(asc|desc)$'),
+    db: Session = Depends(get_db)
+):
+    return repository.exchanges.get_filtered_exchanges(
+        db=db,
+        from_date=from_date,
+        to_date=to_date,
+        status=status,
+        user_id=user_id,
+        sort_order=sort_order
+    )

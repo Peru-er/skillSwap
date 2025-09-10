@@ -5,7 +5,8 @@ import uvicorn
 
 from src.database.db import engine, get_db
 from src.database.models import Base
-from src.routes import users, skills, exchanges, reviews
+from src.routes import users, skills, exchanges, reviews, categories, stats
+
 
 # Створюємо таблиці (якщо вони не існують)
 Base.metadata.create_all(bind=engine)
@@ -33,6 +34,8 @@ app.include_router(users.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(exchanges.router, prefix="/api")
 app.include_router(reviews.router, prefix="/api")
+app.include_router(stats.router, prefix="/api")
+app.include_router(categories.router, prefix="/api")
 
 @app.get("/")
 def read_root():

@@ -83,21 +83,4 @@ async def read_user_skills(user_id: int, db: Session = Depends(get_db)):
     return skills
 
 
-@router.get("/top-skills")
-async def get_top_skills(db: Session = Depends(get_db)) -> List[Dict]:
-    """Топ-10 популярних навичок (за кількістю користувачів)."""
-    return await repository_users.get_top_skills(db)
-
-
-@router.get("/active-users")
-async def get_active_users(db: Session = Depends(get_db)) -> List[Dict]:
-    """Найактивніші користувачі (за кількістю обмінів)."""
-    return await repository_users.get_active_users(db)
-
-
-@router.get("/exchange-success-rate")
-async def get_exchange_success_rate(db: Session = Depends(get_db)) -> Dict:
-    """Відсоток успішних обмінів."""
-    return await repository_users.get_exchange_success_rate(db)
-
 
